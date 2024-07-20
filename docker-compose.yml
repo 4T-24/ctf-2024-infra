@@ -1,0 +1,61 @@
+services:
+  control-0:
+    build:
+      context: ./dev
+      args:
+        - is=controller-0
+    ports:
+      - "2322:22"
+    runtime: sysbox-runc
+    volumes:
+      - ./dev/fake_4ts.pub:/home/admin/.ssh/authorized_keys
+    networks:
+      cluster:
+        ipv4_address: 10.64.0.6
+  control-1:
+    build:
+      context: ./dev
+      args:
+        - is=controller-1
+    ports:
+      - "2323:22"
+    runtime: sysbox-runc
+    volumes:
+      - ./dev/fake_4ts.pub:/home/admin/.ssh/authorized_keys
+    networks:
+      cluster:
+        ipv4_address: 10.64.0.7
+  worker-0:
+    build:
+      context: ./dev
+      args:
+        - is=worker-0
+    ports:
+      - "2324:22"
+    runtime: sysbox-runc
+    volumes:
+      - ./dev/fake_4ts.pub:/home/admin/.ssh/authorized_keys
+    networks:
+      cluster:
+        ipv4_address: 10.64.0.8
+  worker-1:
+    build:
+      context: ./dev
+      args:
+        - is=worker-1
+    ports:
+      - "2325:22"
+    runtime: sysbox-runc
+    volumes:
+      - ./dev/fake_4ts.pub:/home/admin/.ssh/authorized_keys
+    networks:
+      cluster:
+        ipv4_address: 10.64.0.9
+
+networks:
+  cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.64.0.0/16
+          gateway: 10.64.0.1
