@@ -12,3 +12,11 @@ export TF_VAR_control-plane-flavor="a1-ram2-disk20-perf1"
 export TF_VAR_load-balancers="1"
 export TF_VAR_load-balancer-flavor="a1-ram2-disk20-perf1"
 ```
+Then you can run the following commands:
+
+```bash
+terraform init
+terraform validate
+terraform plan
+terraform apply
+```
