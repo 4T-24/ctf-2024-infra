@@ -6,6 +6,10 @@ terraform {
       source  = "terraform-provider-openstack/openstack"
       version = "~> 1.53.0"
     }
+    cloudinit = {
+      source = "hashicorp/cloudinit"
+      version = "2.3.4"
+    }
   }
 }
 

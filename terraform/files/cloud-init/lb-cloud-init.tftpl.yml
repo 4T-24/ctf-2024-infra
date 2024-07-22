@@ -1,0 +1,25 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+groups:
+  - docker
+
+system_info:
+  default_user:
+    groups: [docker]
+
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - unattended-upgrades
+
+write_files:
+  - path: /etc/haproxy/haproxy.cfg
+    permissions: "0444"
+    owner: root:root
+    content: |
+      ${indent(6, haproxy_config)}
