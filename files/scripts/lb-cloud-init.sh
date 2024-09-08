@@ -15,4 +15,15 @@ apt-get update
 
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-docker run -d --name haproxy -v /etc/haproxy:/usr/local/etc/haproxy:ro --sysctl net.ipv4.ip_unprivileged_port_start=0 haproxy:${HAPROXY_VERSION:lts}
+cat << EOF > /home/debian/docker-compose.yml
+name: haproxy
+services:
+  lb:
+    image: haproxy:lts
+    container_name: haproxy
+    network_mode: host
+    volumes:
+        - /etc/haproxy:/usr/local/etc/haproxy:ro
+EOF
+
+docker compose -f /home/debian/docker-compose.yml up -d
