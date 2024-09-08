@@ -119,7 +119,12 @@ module "k0s-cluster" {
       role                = "worker"
       private_ip_address  = instance.access_ip_v4
       floating_ip_address = instance.floating_ip_address
-      install_flags = [ "--enable-cloud-provider", "--kubelet-extra-args=\"--cloud-provider=external\""]
+      install_flags = [
+        "--enable-cloud-provider", 
+        "--kubelet-extra-args=\"--cloud-provider=external\"",
+        "--cri-socket remote:unix:///var/run/crio/crio.sock",
+        "--profile crio-compatibility"
+      ]
     }]
   )
 

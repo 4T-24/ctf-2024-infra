@@ -39,6 +39,10 @@ spec:
       flexVolumeDriverPath: /usr/libexec/k0s/kubelet-plugins/volume/exec/nodeagent~uds
       withWindowsNodes: false
       overlay: Always
+  workerProfiles:
+    - name: crio-compatibility
+      values:
+      cgroupDriver: systemd
   images:
     calico:
       cni:
