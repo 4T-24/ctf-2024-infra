@@ -2,11 +2,10 @@ locals {
   k0s_hosts = [for host in var.hosts : {
     role = host.role
     ssh = {
-      address = host.floating_ip_address
-      port    = 22
-      user    = var.ssh_login_name
-      key_path    = var.private_key_pair_path
-      install_flags = host.install_flags
+      address       = host.floating_ip_address
+      port          = 22
+      user          = var.ssh_login_name
+      key_path      = var.private_key_pair_path
     }
   }]
 }
@@ -23,6 +22,10 @@ kind: ClusterConfig
 metadata:
   name: k0s
 spec:
+  workerProfiles:
+    - name: crio-compatibility
+      values:
+        cgroupDriver: systemd
   api:
     externalAddress: ${var.load_balancer_ip}
     sans: [${var.load_balancer_ip}]
@@ -39,10 +42,6 @@ spec:
       flexVolumeDriverPath: /usr/libexec/k0s/kubelet-plugins/volume/exec/nodeagent~uds
       withWindowsNodes: false
       overlay: Always
-  workerProfiles:
-    - name: crio-compatibility
-      values:
-      cgroupDriver: systemd
   images:
     calico:
       cni:
@@ -58,8 +57,10 @@ spec:
         image: calico/kube-controllers
         version: v3.16.2
 EOT
+}
 
-  # provisioner "local-exec" {
-  #   command = "ssh -i ${var.private_key_pair_path} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o IdentitiesOnly=yes -o ConnectTimeout=10 -o ServerAliveInterval=60 -o ServerAliveCountMax=30 ${var.ssh_login_name}@${var.load_balancer_ip} sudo k0s kubeconfig admin >> kubeconfig"
-  # }
+# We can now output the kubeconfig
+resource "local_file" "kubeconfig" {
+    content  = k0s_cluster.this.kubeconfig
+    filename = "output/kubeconfig"
 }

@@ -27,3 +27,5 @@ services:
 EOF
 
 docker compose -f /home/debian/docker-compose.yml up -d
+
+touch /tmp/signal

@@ -31,6 +31,7 @@ module "control_plane" {
   flavor_id = var.control_plane_flavor_id
 
   public_key_pair = module.bootstrap.public_key_pair_name
+  private_key_pair = var.private_key_pair_path
   ssh_login_name  = var.ssh_login_name
 
   security_groups = [
@@ -57,6 +58,7 @@ module "worker" {
   flavor_id = var.worker_flavor_id
 
   public_key_pair = module.bootstrap.public_key_pair_name
+  private_key_pair = var.private_key_pair_path
   ssh_login_name  = var.ssh_login_name
 
   security_groups = [
@@ -84,6 +86,7 @@ module "load_balancer" {
   flavor_id = var.worker_flavor_id
 
   public_key_pair = module.bootstrap.public_key_pair_name
+  private_key_pair = var.private_key_pair_path
   ssh_login_name  = var.ssh_login_name
 
   security_groups = [
@@ -113,24 +116,30 @@ module "k0s-cluster" {
       role                = "controller"
       private_ip_address  = instance.access_ip_v4
       floating_ip_address = instance.floating_ip_address
-      install_flags = []
     }],
     [for instance in module.worker : {
       role                = "worker"
       private_ip_address  = instance.access_ip_v4
       floating_ip_address = instance.floating_ip_address
-      install_flags = [
-        "--enable-cloud-provider", 
-        "--kubelet-extra-args=\"--cloud-provider=external\"",
-        "--cri-socket remote:unix:///var/run/crio/crio.sock",
-        "--profile crio-compatibility"
-      ]
     }]
   )
 
   load_balancer_ip = module.load_balancer[0].floating_ip_address
 
-  depends_on = [module.bootstrap, module.network, module.security_groups, module.control_plane, module.worker]
+  depends_on = [module.bootstrap, module.network, module.security_groups, module.control_plane, module.worker, module.load_balancer]
+}
+
+module "k0s-crio" {
+  source = "./modules/k0s-crio"
+
+  hosts = [ for instance in module.worker : {
+    floating_ip_address = instance.floating_ip_address
+  }]
+
+  ssh_login_name = var.ssh_login_name
+  private_key_pair_path = var.private_key_pair_path
+
+  depends_on = [module.k0s-cluster]
 }
 
 module "flux-bootstrap" {
@@ -146,4 +155,12 @@ module "os-cloud-secret" {
   cluster_config             = module.k0s-cluster.kubeconfig
   network_external_id        = var.network_external_id
   network_internal_subnet_id = module.network.subnet_id
+}
+
+resource "null_resource" "this" {
+  provisioner "local-exec" {
+    command = "./files/scripts/finalize.sh"
+  }
+
+  depends_on = [module.os-cloud-secret]
 }

@@ -19,3 +19,5 @@ systemctl start crio.service
 swapoff -a
 modprobe br_netfilter
 sysctl -w net.ipv4.ip_forward=1
+
+touch /tmp/signal

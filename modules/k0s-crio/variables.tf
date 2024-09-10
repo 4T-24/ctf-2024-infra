@@ -1,8 +1,6 @@
 variable "hosts" {
-  description = "List of hosts to deploy k0s cluster on"
+  description = "List of hosts to deploy crio"
   type = list(object({
-    role                = string
-    private_ip_address  = string
     floating_ip_address = string
   }))
 }
@@ -13,8 +11,4 @@ variable "ssh_login_name" {
 
 variable "private_key_pair_path" {
   description = "Path to the private key used for SSH access"
-}
-
-variable "load_balancer_ip" {
-  description = "Load balancer to use for the cluster"
 }

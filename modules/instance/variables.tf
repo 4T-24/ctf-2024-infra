@@ -14,6 +14,10 @@ variable "public_key_pair" {
   description = "Key pair to use for the instance"
 }
 
+variable "private_key_pair" {
+  description = "Key pair to use for the instance"
+}
+
 variable "security_groups" {
   description = "Security groups to use for the instance"
 
