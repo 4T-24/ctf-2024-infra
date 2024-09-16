@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sleep 60s
+sleep 15
 
 KUBECONFIG=output/kubeconfig
 
@@ -28,3 +28,5 @@ kubectl wait --timeout=90s --for=condition=available deployment emissary-apiext 
 
 kubectl apply -f https://app.getambassador.io/yaml/emissary/3.9.1/emissary-emissaryns.yaml
 kubectl -n emissary wait --for condition=available --timeout=90s deploy -lproduct=aes  || true
+
+kubectl label --overwrite --all nodes topology.cinder.csi.openstack.org/zone=nova
