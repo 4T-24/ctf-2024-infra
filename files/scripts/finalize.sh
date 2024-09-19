@@ -2,7 +2,7 @@
 
 sleep 15
 
-KUBECONFIG=output/kubeconfig
+export KUBECONFIG=output/kubeconfig
 
 if [ ! -f $KUBECONFIG ]; then
     echo "Kubeconfig file not found"
@@ -30,3 +30,5 @@ kubectl apply -f https://app.getambassador.io/yaml/emissary/3.9.1/emissary-emiss
 kubectl -n emissary wait --for condition=available --timeout=90s deploy -lproduct=aes  || true
 
 kubectl label --overwrite --all nodes topology.cinder.csi.openstack.org/zone=nova
+kubectl label --all nodes sysbox-install=yes
+kubectl apply -f https://raw.githubusercontent.com/nestybox/sysbox/master/sysbox-k8s-manifests/sysbox-install.yaml

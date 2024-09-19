@@ -1,0 +1,5 @@
+grafana:
+  adminPassword: 7!e1w$Gw3rWWAg&7JrQ4h69aco%#IAgZ
+
+  service:
+    portName: http-web
