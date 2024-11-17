@@ -9,7 +9,7 @@ Terraform to deploy a k0s cluster in OpenStack. The goal is to have a terraform 
 - [k0s](https://k0sproject.io)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - An OpenStack project with the openrc variables set in the environment
-- A public key pair in your computer
+- Changing the ssh key in `files`
 
 ## Usage
 
